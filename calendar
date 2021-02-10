@@ -1,0 +1,32 @@
+# Function for showing the calendar of the given year
+
+def Calendar():
+
+
+    def showCal():
+        root1 = Tk()
+        root1.config(background="white")
+        root1.title("MY CALENDAR")
+        root1.geometry("650x700")
+        fetch_year = int(year_field.get())
+        cal_data = calendar.calendar(fetch_year)
+        cal_year = Label(root1, text=cal_data, font="Lucida 10 bold")
+        cal_year.grid(row=7, column=1, padx=20,)
+        root1.mainloop()
+
+    if __name__ == '__main__':
+        gui = Tk()
+        gui.config(background="light pink")
+        gui.title("CALENDAR")
+        gui.geometry("250x250")
+        cal = Label(gui, text="CALENDAR", bg="red", font=("times", 28, 'bold'))
+        year = Label(gui, text="Enter Year", bg="light green")
+        year_field = Entry(gui)
+        Show = Button(gui, text="Show Calendar", fg="Black",bg="Red", command=showCal)
+        Exit = Button(gui, text="Exit", bg="Red", command=exit)
+        cal.grid(row=1, column=1)
+        year.grid(row=2, column=1)
+        year_field.grid(row=3, column=1)
+        Show.grid(row=4, column=1)
+        Exit.grid(row=6, column=1)
+        gui.mainloop()

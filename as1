@@ -1,0 +1,405 @@
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
+from tkinter import *
+from tkinter import Menu
+import pyttsx3 as pp
+import speech_recognition as s
+import threading
+import parser
+from math import factorial
+import random
+import requests
+import wikipedia
+import datetime
+import calendar
+from datetime import date
+from bs4 import BeautifulSoup
+i = 0
+
+
+# Function for showing the calendar of the given year
+
+def Calendar():
+
+
+    def showCal():
+        root1 = Tk()
+        root1.config(background="white")
+        root1.title("MY CALENDAR")
+        root1.geometry("600x600")
+        fetch_year = int(year_field.get())
+        cal_data = calendar.calendar(fetch_year)
+        cal_year = Label(root1, text=cal_data, font="Lucida 10 bold")
+        cal_year.grid(row=7, column=1, padx=20)
+        root1.mainloop()
+
+    if __name__ == '__main__':
+        gui = Tk()
+        gui.config(background="light blue")
+        gui.title("CALENDAR")
+        gui.geometry("215x170")
+        cal = Label(gui, text="CALENDAR",font=("arial", 28, 'bold'))
+        year = Label(gui, text="Enter Year",bg="light pink", font=("arial",20,'bold'))
+        year_field = Entry(gui)
+        Show = Button(gui, text="Show Calendar", fg="Black",bg="pink", command=showCal)
+        Exit = Button(gui, text="Exit", bg="Red", command=exit)
+        cal.grid(row=1, column=1)
+        year.grid(row=2, column=1)
+        year_field.grid(row=3, column=1)
+        Show.grid(row=4, column=1)
+        Exit.grid(row=6, column=1)
+        gui.mainloop()
+
+def calculator():
+    root = Tk()
+    root.title("Calculator")
+    root.geometry("370x270")
+
+    def get_variables(num):
+        global i
+        display.insert(i, num)
+        i += 1
+
+    def get_operation(operator):
+        global i
+        length = len(operator)
+        display.insert(i, operator)
+        i += length
+
+    def clear_all():
+        display.delete(0, END)
+
+    def undo():
+        entire_string = display.get()
+        if len(entire_string):
+            new_string = entire_string[:-1]
+            clear_all()
+            display.insert(0, new_string)
+        else:
+            clear_all()
+            display.insert(0, "Error")
+
+    def calculate():
+        entire_string = display.get()
+        try:
+            a = parser.expr(entire_string).compile()
+            result = eval(a)
+            clear_all()
+            display.insert(0, result)
+        except Exception:
+            clear_all()
+            display.insert(0, "Error")
+
+    def fact():
+        entire_string = display.get()
+        try:
+            result = factorial(int(entire_string))
+            clear_all()
+            display.insert(0, result)
+        except Exception:
+            clear_all()
+            display.insert(0, "Error")
+
+    # adding the input field
+
+    display = Entry(root, width=50, justify="right", bd=0)
+    display.grid(row=1, columnspan=6, sticky=N + E + W + S)
+    # Code to add buttons to the Calculator
+    Button(root, text="1", command=lambda: get_variables(1), height=2, width=7).grid(row=2, column=0,
+                                                                                     sticky=N + S + E + W)
+    Button(root, text=" 2", command=lambda: get_variables(2), height=2, width=7).grid(row=2, column=1,
+                                                                                      sticky=N + S + E + W)
+    Button(root, text=" 3", command=lambda: get_variables(3), height=2, width=7).grid(row=2, column=2,
+                                                                                      sticky=N + S + E + W)
+
+    Button(root, text="4", command=lambda: get_variables(4), height=2, width=7).grid(row=3, column=0,
+                                                                                     sticky=N + S + E + W)
+    Button(root, text=" 5", command=lambda: get_variables(5), height=2, width=7).grid(row=3, column=1,
+                                                                                      sticky=N + S + E + W)
+    Button(root, text=" 6", command=lambda: get_variables(6), height=2, width=7).grid(row=3, column=2,
+                                                                                      sticky=N + S + E + W)
+
+    Button(root, text="7", command=lambda: get_variables(7), height=2, width=7).grid(row=4, column=0,
+                                                                                     sticky=N + S + E + W)
+    Button(root, text=" 8", command=lambda: get_variables(8), height=2, width=7).grid(row=4, column=1,
+                                                                                      sticky=N + S + E + W)
+    Button(root, text=" 9", command=lambda: get_variables(9), height=2, width=7).grid(row=4, column=2,
+                                                                                      sticky=N + S + E + W)
+
+    # adding other buttons to the calculator
+    Button(root, text="AC", command=lambda: clear_all(), height=2, width=7).grid(row=5, column=0, sticky=N + S + E + W)
+    Button(root, text=" 0", command=lambda: get_variables(0), height=2, width=7).grid(row=5, column=1,
+                                                                                      sticky=N + S + E + W)
+    Button(root, text=" .", command=lambda: get_variables("."), height=2, width=7).grid(row=5, column=2,
+                                                                                        sticky=N + S + E + W)
+
+    Button(root, text="+", command=lambda: get_operation("+"), height=2, width=7).grid(row=2, column=3,
+                                                                                       sticky=N + S + E + W)
+    Button(root, text="-", command=lambda: get_operation("-"), height=2, width=7).grid(row=3, column=3,
+                                                                                       sticky=N + S + E + W)
+    Button(root, text="*", command=lambda: get_operation("*"), height=2, width=7).grid(row=4, column=3,
+                                                                                       sticky=N + S + E + W)
+    Button(root, text="/", command=lambda: get_operation("/"), height=2, width=7).grid(row=5, column=3,
+                                                                                       sticky=N + S + E + W)
+
+    # adding new operations
+    Button(root, text="pi", command=lambda: get_operation("*3.14"), height=2, width=7).grid(row=2, column=4,
+                                                                                            sticky=N + S + E + W)
+    Button(root, text="%", command=lambda: get_operation("%"), height=2, width=7).grid(row=3, column=4,
+                                                                                       sticky=N + S + E + W)
+    Button(root, text="(", command=lambda: get_operation("("), height=2, width=7).grid(row=4, column=4,
+                                                                                       sticky=N + S + E + W)
+    Button(root, text="exp", command=lambda: get_operation("**"), height=2, width=7).grid(row=5, column=4,
+                                                                                          sticky=N + S + E + W)
+
+    Button(root, text="<-", command=lambda: undo(), height=2, width=7).grid(row=2, column=5, sticky=N + S + E + W)
+    Button(root, text="x!", command=lambda: fact(), height=2, width=7).grid(row=3, column=5, sticky=N + S + E + W)
+    Button(root, text=")", command=lambda: get_operation(")"), height=2, width=7).grid(row=4, column=5,
+                                                                                       sticky=N + S + E + W)
+    Button(root, text="^2", command=lambda: get_operation("**2"), height=2, width=7).grid(row=5, column=5,
+                                                                                          sticky=N + S + E + W)
+    Button(root, text="^2", command=lambda: get_operation("**2"), height=2, width=7).grid(row=5, column=5,
+                                                                                          sticky=N + S + E + W)
+    Button(root, text="=", command=lambda: calculate(), height=2, width=7).grid(columnspan=6, sticky=N + S + E + W)
+
+    root.mainloop()
+
+
+engine = pp.init()
+
+voices = engine.getProperty('voices')
+print(voices)
+engine.setProperty('voice', voices[1].id)
+
+rate = engine.getProperty('rate')
+print(rate)
+engine.setProperty('rate', 120)
+
+
+def speak(word):
+    engine.say(word)
+    engine.runAndWait()
+
+
+bot = ChatBot("My bot")
+# take query : it take audio as input from user and convert it to string
+
+
+def takequery():
+    sr = s.Recognizer()
+    sr.pause_threshold = 1
+    print("your bot is listening try to speak")
+    with s.Microphone() as m:
+        try:
+            audio = sr.listen(m)
+            query = sr.recognize_google(audio, language='eng-in')
+            print(query)
+            textF.delete(0, END)
+            textF.insert(0, query)
+            ask_from_bot()
+        except Exception as e:
+            print(e)
+            print("not recognized")
+
+
+def ask_from_bot():
+    # for calc of adding
+    calc_add_entry = textF.get()
+    calc_add_split = calc_add_entry.split(">")[-1]
+
+    # for wiki
+    new_wiki_entry = textF.get()
+    wiki_split = new_wiki_entry.split(">")[-1]
+
+    # for calc of sub
+    calc_sub_entry = textF.get()
+    calc_sub_split = calc_sub_entry.split(">")[-1]
+    calc_split_sub_first = calc_sub_split.split("-")[0]
+    calc_split_sub_second = calc_sub_split.split("-")[-1]
+
+    # for weather
+    USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
+    LANGUAGE = "en-US,en;q=0.5"
+    session = requests.Session()
+    session.headers['User-Agent'] = USER_AGENT
+    session.headers['Accept-Language'] = LANGUAGE
+    session.headers['Content-Language'] = LANGUAGE
+    new_wea_entry = textF.get()
+    wea_split = new_wea_entry.split(">")[-1]
+
+    # start from here
+    InsEntry = textF.get()
+    textF.configure(state=NORMAL)
+    valIns = "You: " + InsEntry + "\n"
+    message.insert(END, valIns)
+    textF.delete(0, END)
+
+    if InsEntry == "hello" or InsEntry == "hi" or InsEntry == "hey":
+        Response = ["hello", "hii", "howdy"]
+        RandRes = random.choice(Response)
+        # to open the state of textarea to write
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(RandRes))
+        speak(RandRes)
+        message.yview(END)
+
+    elif InsEntry == "date" or InsEntry == "today date":
+        tod_date = date.today()
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(tod_date))
+        speak(tod_date)
+        message.yview(END)
+
+    elif InsEntry == "time" or InsEntry == "current time":
+        currtime = datetime.datetime.now().time()
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(currtime))
+        speak(currtime)
+        message.yview(END)
+
+    elif InsEntry == "how are you" or InsEntry == "how are you?":
+        Response = ["I'm fine", "I'm good"]
+        textF.configure(state=NORMAL)
+        RandRes = random.choice(Response)
+        message.insert(END, "Bot: "+ str(RandRes))
+        speak(RandRes)
+        message.yview(END)
+
+    elif InsEntry == "good morning" or InsEntry == "morning":
+        Response = ["morning", "goodie morn"]
+        RandRes = random.choice(Response)
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: "+ str(RandRes))
+        speak(RandRes)
+        message.yview(END)
+
+    elif InsEntry == "what is your name" or InsEntry == "what is your name?":
+        Response = "My name is bot."
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(Response))
+        speak(Response)
+        message.yview(END)
+
+    elif InsEntry == "open calculator" or InsEntry == "calculator":
+        Res = "Ok, Follow these steps 1:Go to insert menu 2:Open Calculator"
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(Res))
+        speak(Res)
+        message.yview(END)
+
+    elif InsEntry == "open calendar" or InsEntry == "calendar":
+        Res = "Ok, Follow these steps 1:Go to insert menu 2:Open Calendar"
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(Res))
+        speak(Res)
+        message.yview(END)
+
+    elif InsEntry == "wiki>" + wiki_split or InsEntry == "Wikipedia" + wiki_split:
+        WikiSearch = wikipedia.summary(wiki_split, sentences=2)
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(WikiSearch))
+        speak(WikiSearch)
+        message.yview(END)
+
+    elif InsEntry == "calc.add>" + calc_add_split or InsEntry == "add" + calc_add_split:
+        # print(calc_add_split)
+        calc_split_add = []
+        calc_split_add = calc_add_split.split("+")
+        for i in range(0, len(calc_split_add)):
+            calc_split_add[i] = int(calc_split_add[i])
+        Sum = sum(calc_split_add)
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(Sum))
+        speak(Sum)
+        message.yview(END)
+
+    elif InsEntry == "calc.sub>"+calc_split_sub_first+"-"+calc_split_sub_second or InsEntry == "subtract"+calc_split_sub_first + "-"+calc_split_sub_second:
+        sub1 = int(calc_split_sub_first)
+        sub2 = int(calc_split_sub_second)
+        subbed = sub1 - sub2
+        textF.configure(state=NORMAL)
+        # msgs.insert(END, CalcLabel)
+        message.insert(END, "Bot: " + str(subbed))
+        speak(subbed)
+        message.yview(END)
+
+    else:
+        englishBot = ChatBot("Chatterbot", storage_adapter="chatterbot.storage.SQLStorageAdapter")
+        trainer = ChatterBotCorpusTrainer(englishBot)
+        trainer.train("chatterbot.corpus.english")  # train the chatter bot for english
+        answer_from_bot = bot.get_response(InsEntry)
+        Response = answer_from_bot
+        textF.configure(state=NORMAL)
+        message.insert(END, "Bot: " + str(Response))
+        speak(Response)
+        message.yview(END)
+    # else:
+    #     else_res = "No result found"
+    #     textF.configure(state=NORMAL)
+    #     msgs.insert(END, "Bot: " + str(else_res))
+    #     speak(else_res)
+    #     # textF.configure(state=DISABLED)
+    #     msgs.yview(END)
+
+
+if __name__ == '__main__':
+    main = Tk()
+# Create Menu Bar
+    menuBar = Menu(main)
+    main.config(menu=menuBar)
+# File menu
+    fileMenu = Menu(menuBar, tearoff=0)
+    fileMenu.add_command(label="New...")
+    fileMenu.add_command(label="Save...")
+    fileMenu.add_command(label="Exit...", command=quit)
+    menuBar.add_cascade(label="File", menu=fileMenu)
+# Insert menu
+    insertMenu = Menu(menuBar, tearoff=0)
+    insertMenu.add_command(label="Calculator", command=calculator)
+    insertMenu.add_command(label="Calendar", command=Calendar)
+    menuBar.add_cascade(label="Insert", menu=insertMenu)
+# Help menu
+    helpMenu = Menu(menuBar, tearoff=0)
+    helpMenu.add_command(label="About")
+    menuBar.add_cascade(label="Help", menu=helpMenu)
+    main.geometry("500x620")
+    main.title("My Chat Bot")
+    img = PhotoImage(file='bot1.png')
+    photoL = Label(main, image=img)
+    photoL.pack(pady=5)
+
+# creating chat window with scrollbar
+    frame = Frame(main)
+    sc = Scrollbar(frame)
+    message = Listbox(frame, width=220, height=20, bg='black', fg='white', yscrollcommand=sc.set)
+    sc.pack(side=RIGHT, fill=Y)
+    message.pack(side=LEFT, fill=BOTH, pady=5)
+    frame.pack()
+
+# creating text field
+    textF = Entry(main, font=("Arial", 20), bg='black', fg='white')
+    textF.pack(fill=X, pady=10)
+    btn = Button(main, text="Ask from Bot", bg='grey', font=("Arial", 20), command=ask_from_bot)
+    btn.pack()
+    # creating a function
+
+
+    def enter_function(event):
+        btn.invoke()
+
+
+    # going to bind window with enter key...
+    main.bind('<Return>', enter_function)
+
+
+    def repeatL():
+        while True:
+            takequery()
+
+
+    t = threading.Thread(target=repeatL)
+    t.start()
+
+    main.mainloop()
+
+    main.mainloop()
