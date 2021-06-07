@@ -1,3 +1,5 @@
+/* Program By Ayush */
+
 from tkinter import*
 import pyttsx3 as pp
 import speech_recognition as s
@@ -11,6 +13,7 @@ import time
 from PIL import ImageTk, Image
 import calendar
 i = 0
+
 
 
 def calculator():
